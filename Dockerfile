@@ -8,7 +8,9 @@ ENV YAPI_VERSION=1.8.5
 WORKDIR /yapi/vendors
 COPY config.js /yapi
 
-RUN echo 'node -e console.log(JSON.stringify(require('/yapi/config.js')))' > /yapi/config.json
+RUN rm -rf /yapi/config.json
+RUN node -e 'console.log(JSON.stringify(require("/yapi/config.js")))' > /yapi/config.json
+
 
 RUN git clone -b "v${YAPI_VERSION}" --single-branch --depth 1 https://github.com/YMFE/yapi.git . \
   && rm -rf .git .github docs test *.{jpg,md} \
@@ -20,14 +22,14 @@ RUN npm ci
 RUN npm run build-client
 RUN shopt -s globstar && rm -rf **/*.{map,lock,log,md,yml}
 
-# # ######## 镜像 ########
-# FROM daocloud.io/yuyongzhi/node
+# ######## 镜像 ########
+FROM daocloud.io/yuyongzhi/node
 
-# WORKDIR /yapi
+WORKDIR /yapi
 
-# COPY --from=source /yapi .
-# COPY start.js .
+COPY --from=source /yapi .
+COPY start.js .
 
-# EXPOSE 3000
+EXPOSE 3000
 
-# CMD ["node", "./start.js"]
+CMD ["node", "./start.js"]
