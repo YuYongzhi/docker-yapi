@@ -32,18 +32,15 @@ const server = http.createServer((req, res) => {
         <pre id="data"></pre>
         <script>
           function fetchData() {
-            addLog('fetch Data')
             var timer = setTimeout(fetchData, 500)
             fetch('./consoleInfo')
               .then(function (res) {
-                addLog('consoleInfo result', res)
                 return res.json()
               })
               .then(function (data) {
                 document.querySelector('#data').innerHTML = data.join('\\n')
               })
               .catch(function () {
-                addLog('reload')
                 clearTimeout(timer)
                 setTimeout(function () { location.reload() }, 2000)
               })
@@ -66,7 +63,12 @@ fs.writeFileSync(
 const start = () => {
   addLog('等待 MongoDB 可用...')
   childProcess
-    .exec(`sleep 5`)
+    .exec(`
+      until nc -z ${config.db.servername} ${config.db.port || 27017}
+      do
+        sleep 0.5
+      done
+    `)
     .on('exit', () => {
       addLog('准备完成，开始启动...')
 
