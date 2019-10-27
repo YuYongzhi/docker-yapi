@@ -32,15 +32,18 @@ const server = http.createServer((req, res) => {
         <pre id="data"></pre>
         <script>
           function fetchData() {
+            addLog('fetch Data')
             var timer = setTimeout(fetchData, 500)
             fetch('./consoleInfo')
               .then(function (res) {
+                addLog('consoleInfo result', res)
                 return res.json()
               })
               .then(function (data) {
                 document.querySelector('#data').innerHTML = data.join('\\n')
               })
               .catch(function () {
+                addLog('reload')
                 clearTimeout(timer)
                 setTimeout(function () { location.reload() }, 2000)
               })
