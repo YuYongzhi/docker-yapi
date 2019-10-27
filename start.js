@@ -66,13 +66,7 @@ fs.writeFileSync(
 const start = () => {
   addLog('等待 MongoDB 可用...')
   childProcess
-    .exec(`
-      until nc -z ${config.db.servername} ${config.db.port || 27017}
-      addLog('等待 MongoDB 可用...')
-      do
-        sleep 0.5
-      done
-    `)
+    .exec(`sleep 5`)
     .on('exit', () => {
       addLog('准备完成，开始启动...')
 
